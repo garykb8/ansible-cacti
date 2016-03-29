@@ -1,0 +1,24 @@
+---
+# tasks file for cacti
+- name: create MySQL user
+  mysql_user: name={{ cacti_db_user }} password={{ cacti_db_passwd }} host={{ cacti_db_host }} priv=*.*:ALL state=present
+
+- name: setup MySQL
+  mysql_db: name=cacti state=present
+
+- name: insert default Cacti table
+  shell: mysql -u {{ cacti_db_user }} -p{{ cacti_db_passwd }} {{ cacti_db_name }} < /usr/share/doc/cacti-0.8.8b/cacti.sql
+  ignore_errors: yes
+
+- name: copy db.php
+  template: src=db.php.j2 dest=/etc/cacti/db.php
+
+- name: copy cacti.conf
+  copy: src=cacti.conf dest=/etc/httpd/conf.d/cacti.conf
+  notify:
+    - restart httpd
+
+- command: /usr/bin/php /usr/share/cacti/poller.php
+- copy: src=cacti dest=/etc/cron.d/cacti
+  notify:
+    - restart crond

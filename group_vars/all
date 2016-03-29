@@ -1,0 +1,4 @@
+cacti_db_user: cacti
+cacti_db_passwd: passwd
+cacti_db_name: cacti
+cacti_db_host: localhost

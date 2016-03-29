@@ -1,0 +1,31 @@
+---
+# tasks file for common
+
+- name: yum update
+  yum: update_cache=yes name=* state=latest
+
+- name: install related packages
+  yum: name={{ item }} state=present
+  with_items:
+    - httpd
+    - httpd-devel
+    - mysql-server
+    - mysql-devel
+    - MySQL-python
+    - php
+    - php-mysql
+    - php-common
+    - php-gd
+    - php-devel
+    - php-mbstring
+    - php-cli
+    - php-snmp
+    - rrdtool
+    - cacti
+
+- name: start services after booting
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - httpd
+    - mysqld
+    - snmpd
